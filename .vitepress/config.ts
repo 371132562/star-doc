@@ -1,3 +1,4 @@
+import type { DefaultTheme } from 'vitepress';
 import { defineConfig } from 'vitepress';
 
 import language from './config/language';
@@ -27,7 +28,7 @@ export default defineConfig({
 
     search: search(),
 
-    nav: nav(),
+    nav: nav() as DefaultTheme.NavItem[],
 
     sidebar: sideBar(),
 
