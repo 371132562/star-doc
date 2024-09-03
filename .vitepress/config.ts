@@ -9,7 +9,7 @@ import viteConfig from './config/vite.config';
 export default defineConfig({
   vite: viteConfig(),
 
-  base: '/star-adventure/',
+  base: '/star-doc/',
   lang: 'zh-CN',
   title: 'Star Doc',
   description: 'Adventure',
