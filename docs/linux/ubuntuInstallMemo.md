@@ -26,6 +26,17 @@ timedatectl list-timezones
 timedatectl set-timezone Asia/Shanghai
 ```
 
+## LVM逻辑卷未占满磁盘
+通过`lsblk`命令查看磁盘分区情况，一般`ubuntu`会安装在`sda3`分区，其中`ubuntu-lv`卷的大小有可能并未占满分区大小。
+通过下边的命令将`ubuntu-lv`卷组扩容到磁盘的最大容量。
+```shell
+sudo lvextend -l +100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv
+```
+或者扩充指定的大小。
+```shell
+sudo lvextend -L 50G /dev/mapper/ubuntu--vg-ubuntu--lv
+```
+
 ## 安装zsh及美化
 
 1. 安装zsh `apt install zsh`
@@ -43,6 +54,7 @@ git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$H
 
 ## 安装zsh插件
 [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
+
 [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md#oh-my-zsh)
 
 ## 安装docker

@@ -6,7 +6,7 @@ const nav = () => {
     { text: '网络', link: '/docs/network/connectionManagement' },
     {
       text: '其他',
-      items: [{ text: 'Linux', link: '/docs/linux/vmwareInstallMemo' }]
+      items: [{ text: 'Linux', link: '/docs/linux/ubuntuInstallMemo' }]
     }
   ];
 };

@@ -69,7 +69,7 @@ Chrome采用多进程架构，顶层是浏览器进程，它与负责不同部�
 当输入的是一个站点的地址时，UI线程会将URL发送到网络线程，网络线程会开始加载页面，标签页标题中显示加载动画提示。线程会向DNS服务器发起请求，获取域名对应的真实IP，
 在第一次请求之后这个IP地址会被缓存一段时间以加速后续请求。
 
-一旦获取的IP地址，浏览器会通过[三次握手](/docs/network/connectionManagement)建立TCP连接。
+一旦获取的IP地址，浏览器会通过[三次握手](/docs/network/connectionManagement)建立TCP连接。（[四次挥手](/docs/network/connectionManagement)断开连接）
 
 对于通过 HTTPS 建立的安全连接，还需要另一次 "握手"。这种握手，或者说 [TLS](https://developer.mozilla.org/zh-CN/docs/Glossary/TLS) 协商，
 决定使用哪种密码对通信进行加密，验证服务器，并在开始实际数据传输前建立安全连接。这就需要在实际发送内容请求之前，再往返服务器五次。
@@ -118,7 +118,7 @@ Chrome采用多进程架构，顶层是浏览器进程，它与负责不同部�
 DOM 树是浏览器对页面的内部表示，以及 Web 开发人员可以通过 JavaScript 与之交互的数据结构和 API。
 树反映了不同标记之间的关系和层次结构。DOM 节点的数量越多，构建 DOM 树所需的时间就越长。
 
-解析进行过程中遇到图片或 CSS 等非阻塞解析的资源时，浏览器会并行下载这些资源和继续解析过程，但是对于`<script>`标签（特别是没有 [`async` 和 `defer`](./deferAndAsync) 属性的），
+解析进行过程中遇到图片或 CSS 等非阻塞解析的资源时，浏览器会并行下载这些资源和继续解析过程，但是对于`<script>`标签（特别是没有 [`async` 和 `defer`](./optimizeExternalResources) 属性的），
 因为 JavaScript 可能会修改 DOM 树，所以会阻塞渲染并停止解析过程。尽管浏览器的[预加载扫描器](./preloadScanner)加速了这个过程，但过多的脚本仍然是一个重要的瓶颈。
 
 > [!NOTE]
