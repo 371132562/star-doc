@@ -50,7 +50,7 @@ const sideBar = () => {
     '/docs/network/': [
       {
         text: '网络',
-        items: [{ text: '三次握手和四次挥手', link: '/docs/network/connectionManagement' }]
+        items: [{ text: '三次握手和四次挥手', link: '/docs/network/tcpHandshakesAndWaves' }]
       }
     ],
     '/docs/linux/': [
