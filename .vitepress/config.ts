@@ -7,14 +7,15 @@ import search from './config/search';
 import sideBar from './config/sidebar';
 import viteConfig from './config/vite.config';
 
+const base = '/star-doc/';
+
 export default defineConfig({
   vite: viteConfig(),
-
-  base: '/star-doc/',
+  base,
   lang: 'zh-CN',
   title: 'Star Doc',
   description: 'Adventure',
-  head: [['link', { rel: 'icon', href: '/images/logo.png' }]],
+  head: [['link', { rel: 'icon', href: base + 'images/logo.png' }]],
   cleanUrls: true, //省略url中的html后缀
   // srcDir: './docs',
   markdown: {
