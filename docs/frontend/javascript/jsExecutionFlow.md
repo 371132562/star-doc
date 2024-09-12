@@ -63,7 +63,7 @@ foo(2);
 "end:2"
 ```
 ![调用栈运行过程](/images/callstack-flow.png)
-> [!NOTE]
+> [!WARNING]
 > 调用栈是有大小的，当入栈的执行上下文超过一定数目，或达到最大调用深度，就会出现栈溢出（Stack Overflow）的问题，这在递归代码中很容易出现。
 
 ## 作用域（Scope）

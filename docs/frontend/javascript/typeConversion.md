@@ -4,9 +4,9 @@
 ## `Number()`转换规则 {#Number}
 
 - **数值**：直接返回。
-- **布尔值**：true转换为1，false转换为0。
-- **null**：返回0。
-- **undefined**：返回NaN。
+- **布尔值**：`true`转换为`1`，`false`转换为`0`。
+- **null**：返回`0`。
+- **undefined**：返回`NaN`。
 - **字符串**：应用以下规则：
   - 如果字符串包含数值字符，包括数值字符前面带加、减号的情况，则转换为一个十进制数值。
   - 如果字符串包含有效的浮点值格式如"1.1"，则会转换为相应的浮点值（同样，忽略前面的零）。
@@ -25,7 +25,7 @@
 - **布尔值**：`true`转换为`"true"`，`false`转换为`"false"`。
 - **null**：转换为`"null"`字符串。
 - **undefined**：转换为`"undefined"`字符串。
-- **Symbol**：直接转换为字符串。例如，`Symbol("description")`转换为`"Symbol(description)"`。
+- **Symbol**：直接转换为字符串。例如，`Symbol(description)`转换为`"Symbol(description)"`。
 - **[对象](#Object)**：调用`toString()`方法并返回结果。如果`toString()`方法返回对象而非原始类型，再调用`valueOf()`方法，并将其结果转换为字符串。
   - 如果`toString()`方法存在并返回原始类型（通常是字符串），直接使用此结果。
   - 如果`valueOf()`返回原始类型，则使用其字符串形式。
@@ -105,7 +105,7 @@ JavaScript首先调用`toString()`方法。如果`toString()`返回原始类型�
 
 如果这两个方法都返回对象而不是原始值，那么JavaScript会抛出一个`TypeError`错误，表示无法进行有效的转换。
 
-> [!NOTE]总结
+> [!NOTE] 总结
 > Boolean：所有对象（包括空对象、数组等）都转换为`true`。\
 > Number：优先调用`valueOf()`，然后调用`toString()`，无法转换则返回`NaN`。\
 > String：优先调用`toString()`，然后调用`valueOf()`，如果都无法返回原始值，抛出错误。
