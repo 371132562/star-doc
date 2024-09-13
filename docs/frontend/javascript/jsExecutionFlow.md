@@ -38,7 +38,7 @@ greetFn(); // 输出: Hello, my name is undefined // [!code highlight]
 greetFn.call(obj2); // 输出: Hello, my name is Object 2 // [!code highlight]
 ```
 
-## 调用栈（Call Stack）
+## 调用栈（Call Stack）{#call-stack}
 顾名思义，调用栈是一个 **LIFO（后进先出）** 的栈数据结构，用来存储代码执行的执行上下文。
 
 当 JavaScript 开始执行一段代码时，会首先将 全局执行上下文 压入调用栈。

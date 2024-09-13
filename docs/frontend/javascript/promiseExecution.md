@@ -67,7 +67,7 @@ let promise = new Promise((resolve, reject) => {
 > 这相当于将默认的空处理函数 `undefined` 放入 `[[PromiseRejectReactions]]` 中，所以这个函数什么也不会做。
 
 ### 回调的异步执行
-`Promise` 的回调执行遵循微任务队列机制。即使 `resolve` 或 `reject` 被立即调用，回调函数也不会同步执行，而是会被放入微任务队列，在 `Call Stack` 被清空后执行。
+`Promise` 的回调执行遵循微任务队列机制。即使 `resolve` 或 `reject` 被立即调用，回调函数也不会同步执行，而是会被放入微任务队列，在 [`Call Stack`](./eventLoop) 被清空后执行。
 ```js
 let promise = new Promise((resolve, reject) => {
   console.log('Promise开始');
@@ -202,3 +202,36 @@ promise
     console.error('捕获到的错误：', error);
   });
 ```
+
+## Promise的静态方法
+`Promise` 除了实例方法外，还有一些静态方法，用于处理多个 `Promise` 实例的状态。
+- `Promise.all(iterable)`：接收一个可迭代对象，返回一个新的 `Promise`。
+只有当所有 `Promise` 都变为 `fulfilled` 时，新的 `Promise` 才会变为 `fulfilled`，并返回所有 `Promise` 的结果数组。
+如果有一个 `Promise` 变为 `rejected`，新的 `Promise` 就会变为 `rejected`，并返回第一个 `rejected` 的结果。
+
+- `Promise.race(iterable)`：接收一个可迭代对象，返回一个新的 `Promise`。返回第一个 `Promise` 的结果，无论是 `fulfilled` 还是 `rejected`。
+
+- `Promise.any(iterable)`：接收一个可迭代对象，返回一个新的 `Promise`。
+只要有一个 `Promise` 变为 `fulfilled`，新的 `Promise` 就会变为 `fulfilled`，并返回第一个 `fulfilled` 的结果。
+如果所有 `Promise` 都变为 `rejected`，新的 `Promise` 就会变为 `rejected`，并返回一个 `AggregateError` 对象，包含所有 `rejected` 的原因。
+
+- `Promise.allSettled(iterable)`：接收一个可迭代对象，返回一个新的 `Promise`。
+  当所有 `Promise` 都变为 `fulfilled` 或 `rejected` 时，新的 `Promise` 才会变为 `fulfilled`，并返回所有 `Promise` 的结果数组，包括每个 `Promise` 的状态。
+
+### 总结
+| **方法**           | **成功时返回**                                        | **失败时返回**                                        | **特点**                                                                                           |
+|--------------------|------------------------------------------------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| **`Promise.all`**   | 所有 `Promise` 成功时，返回**所有结果数组**              | 任意一个 `Promise` 失败时，返回**第一个失败的原因**         | - 并行执行所有 `Promise`，所有都成功才会 `resolve`。<br> - 任意一个失败则立即 `reject`。        |
+| **`Promise.race`**  | **第一个完成的 `Promise` 结果**（无论成功或失败）       | **第一个完成的 `Promise` 结果**（无论成功或失败）       | - 并行执行所有 `Promise`，第一个 `resolve` 或 `reject` 就停止。                                 |
+| **`Promise.any`**   | **第一个成功的 `Promise` 结果**                        | 所有 `Promise` 失败时，返回一个**`AggregateError`**    | - 并行执行所有 `Promise`，只要有一个成功就 `resolve`。<br> - 所有失败时才 `reject`。             |
+| **`Promise.allSettled`** | 返回所有 `Promise` 的**结果数组**（每个结果包含 `status` 和 `value/reason`） | 返回所有 `Promise` 的**结果数组**（每个结果包含 `status` 和 `value/reason`） | - 并行执行所有 `Promise`，无论成功或失败都返回结果。<br> - 不会因为任何 `Promise` 失败而终止。   |
+
+## Promise的优势
+- **链式调用，避免回调地狱**
+- **更好的错误处理**
+
+   在回调方式中，错误处理通常需要在每个回调中手动添加 try-catch 或在每个函数中处理错误。
+   Promise 提供了一个统一的错误处理机制，通过 .catch 方法捕获链中的所有错误，无论在哪个步骤发生的错误都会被传递到下一个 catch 回调。
+- **处理并行异步任务**
+
+   `Promise` 提供了 `Promise.all` 和 `Promise.race` 等静态方法，可以方便地处理并行异步操作。
