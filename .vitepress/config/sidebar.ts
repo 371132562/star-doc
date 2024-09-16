@@ -13,7 +13,8 @@ const sideBar = () => {
             link: '/docs/frontend/javascript/jsExecutionFlow'
           },
           { text: 'Promise的使用和执行过程', link: '/docs/frontend/javascript/promiseExecution' },
-          { text: '事件循环', link: '/docs/frontend/javascript/eventLoop' }
+          { text: '事件循环', link: '/docs/frontend/javascript/eventLoop' },
+          { text: 'Web Worker', link: '/docs/frontend/javascript/webWorker' }
         ],
 
         collapsed: false
@@ -33,7 +34,9 @@ const sideBar = () => {
         items: [
           { text: '深入了解现代网络浏览器', link: '/docs/frontend/browser/modernWebBrowser' },
           { text: '外部资源引入优化', link: '/docs/frontend/browser/optimizeExternalResources' },
-          { text: '预加载扫描器', link: '/docs/frontend/browser/preloadScanner' }
+          { text: '预加载扫描器', link: '/docs/frontend/browser/preloadScanner' },
+          { text: '浏览器缓存机制', link: '/docs/frontend/browser/browserCache' },
+          { text: '浏览器帧原理', link: '/docs/frontend/browser/browserFrame' }
         ],
         collapsed: false
       }
