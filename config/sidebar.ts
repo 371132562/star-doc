@@ -15,7 +15,7 @@ const sideBar = () => {
           { text: 'Promise的使用和执行过程', link: '/docs/frontend/javascript/promiseExecution' },
           { text: '事件循环', link: '/docs/frontend/javascript/eventLoop' },
           { text: 'rAF和rICB', link: '/docs/frontend/javascript/rAFAndrICB' },
-          { text: 'Web Worker', link: '/docs/frontend/javascript/webWorker' }
+          { text: 'Worker', link: '/docs/frontend/javascript/worker' }
         ],
 
         collapsed: false

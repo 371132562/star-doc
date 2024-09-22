@@ -166,4 +166,4 @@ CSSOM 树和 DOM 树结合在一起，形成**渲染树**。渲染树是一个�
 - [浏览器缓存机制](./browserCache)
 - [浏览器帧原理](./browserFrame)
 - JS运行的 [事件循环机制](../javascript/eventLoop)
-- 提供JS多线程能力 [Web Worker](../javascript/webWorker)
+- 提供JS多线程能力 [Web Worker](../javascript/worker)

@@ -4,6 +4,6 @@ export default [
   ...starEslint('eslint', { ts: true }),
   {
     name: 'starDocEsLint',
-    ignores: ['**/theme/index.ts']
+    ignores: ['**/theme/index.ts', '**/demo/**']
   }
 ];

@@ -84,7 +84,7 @@ console.log('Promise结束');
 // Promise结束
 // 成功的回调：成功
 ```
-可以看到，then 中的回调是异步执行的，即使 resolve 被立即调用。
+可以看到，`then` 中的回调是异步执行的，即使 resolve 被立即调用。
 > [!NOTE]
 > 如果回调注册时 `Promise` 还处于 `pending` 状态，这些回调函数会被暂时存储，等到状态改变时再执行。
 > 

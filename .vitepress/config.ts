@@ -1,11 +1,11 @@
 import type { DefaultTheme } from 'vitepress';
 import { defineConfig } from 'vitepress';
 
-import language from './config/language';
-import nav from './config/nav';
-import search from './config/search';
-import sideBar from './config/sidebar';
-import viteConfig from './config/vite.config';
+import language from '../config/language';
+import nav from '../config/nav';
+import search from '../config/search';
+import sideBar from '../config/sidebar';
+import viteConfig from '../config/viteConfig';
 
 const base = '/star-doc/';
 
@@ -35,20 +35,20 @@ export default defineConfig({
 
     ...language(),
 
-    // editLink: {
-    //   pattern: 'https://github.com/vuejs/vitepress/edit/main/docs/:path',
-    //   text: '在 GitHub 上编辑此页面'
-    // },
+    editLink: {
+      pattern: 'https://github.com/371132562/star-doc/edit/master/:path',
+      text: '在 GitHub 上编辑此页面'
+    },
 
-    // footer: {
-    //   message: '基于 MIT 许可发布',
-    //   copyright: `版权所有 © 2019-${new Date().getFullYear()} 尤雨溪`
-    // },
+    footer: {
+      message: '基于 Apache-2.0 许可发布',
+      copyright: `Copyright © 2024-${new Date().getFullYear()} Star`
+    },
 
     socialLinks: [
       {
         icon: 'github',
-        link: 'https://github.com/371132562/star-adventure/tree/master/apps/web-doc'
+        link: 'https://github.com/371132562/star-doc'
       }
     ]
   }
