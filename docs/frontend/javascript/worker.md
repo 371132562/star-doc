@@ -296,7 +296,7 @@ self.onconnect = (event) => {
 ## Service Worker
 ### 基本概念
 ![Service Worker](/images/worker-service-worker.png)
-`Service Worker` 是一种运行在浏览器后台的脚本，独立于网页，即使浏览器关闭，`Service Worker` 仍然可以运行。
+`Service Worker` 是一种运行在浏览器后台的脚本，独立于网页，已经注册 `Worker` 的页面标签页即使关闭但浏览器未关闭的情况下，`Service Worker` 仍然可以运行。
 
 它具有监听和拦截网络请求、缓存数据、推送消息等功能。所以本质上充当 Web 应用程序、浏览器与网络（可用时）之间的代理服务器。适合不需要在前台展示和交互的功能。
 
@@ -742,6 +742,10 @@ self.addEventListener('push', event => {
   );
 });
 ```
+### DEMO
+[Service Worker Demo](https://star-adventure.vercel.app/demo/serviceWorker)
+
+在这个DEMO中我请求了一个实际上并不存在的接口，但是由于`Service Worker`的缓存策略，在控制台的 `network` 详情中我们可以看到直接从缓存中获取了数据 `200 OK （自service worker）`。
 
 ## `Worklet`
 [待补充](https://developer.mozilla.org/en-US/docs/Web/API/Worklet)
