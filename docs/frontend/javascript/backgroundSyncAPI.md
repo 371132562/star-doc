@@ -34,3 +34,6 @@ self.addEventListener('sync', (event) => {
 ::: info NOTE
 经过在 Edge 129 版本中的测试，表现为，如果你注册任务时，网络是连接的，那么 `sync` 事件会立即触发，如果网络是断开的，那么 `sync` 事件会在网络恢复后触发。
 :::
+
+## DEMO
+[Background Sync API Demo](https://star-adventure.vercel.app/demo/frontend/javascript/backgroundSyncAPI)

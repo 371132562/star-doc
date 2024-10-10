@@ -735,7 +735,7 @@ const options = {
 self.registration.showNotification(title, options)
 ```
 ### DEMO
-[Service Worker Demo](https://star-adventure.vercel.app/demo/serviceWorker)
+[Service Worker Demo](https://star-adventure.vercel.app/demo/frontend/javascript/worker)
 
 在这个DEMO中请求了一个实际上并不存在的接口，但是由于`Service Worker`的缓存策略，在控制台的 `network` 详情中我们可以看到直接从缓存中获取了数据 `200 OK （自service worker）`。
 
