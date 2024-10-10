@@ -703,7 +703,7 @@ self.addEventListener('fetch', event => {
 ---
 - **后台同步**
 
-后台同步允许当用户离线时，`Service Worker` 可以缓存用户的操作（如表单提交），并在网络恢复时重新发送这些请求。
+后台同步允许当用户离线时，`Service Worker` 可以使用 [Background Sync API](./backgroundSyncAPI) 缓存用户的操作（如表单提交），并在网络恢复时重新发送这些请求。
 ```js
 self.addEventListener('sync', event => {
   if (event.tag === 'sync-form-submission') {
@@ -728,24 +728,16 @@ function sendCachedRequests() {
 
 为用户提供消息推送功能，无论应用是否在前台运行，都可以通过 `Service Worker` 发送通知。
 ```js
-self.addEventListener('push', event => {
-  const data = event.data.json(); // 获取推送的消息数据
-  const title = data.title || '默认标题';
-  const options = {
-    body: data.body || '这是推送消息的内容',
-    icon: '/icon.png'
-  };
-
-  // 显示通知
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
-});
+const title =  '通知';
+const options = {
+  body: '这是来自 Service Worker 的通知调用',
+};
+self.registration.showNotification(title, options)
 ```
 ### DEMO
 [Service Worker Demo](https://star-adventure.vercel.app/demo/serviceWorker)
 
-在这个DEMO中我请求了一个实际上并不存在的接口，但是由于`Service Worker`的缓存策略，在控制台的 `network` 详情中我们可以看到直接从缓存中获取了数据 `200 OK （自service worker）`。
+在这个DEMO中请求了一个实际上并不存在的接口，但是由于`Service Worker`的缓存策略，在控制台的 `network` 详情中我们可以看到直接从缓存中获取了数据 `200 OK （自service worker）`。
 
 ## `Worklet`
 [待补充](https://developer.mozilla.org/en-US/docs/Web/API/Worklet)
