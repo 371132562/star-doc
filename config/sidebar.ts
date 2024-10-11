@@ -8,6 +8,7 @@ const sideBar = () => {
           { text: 'valueOf和toString', link: '/docs/frontend/javascript/valueOfAndToString' },
           { text: '短路逻辑', link: '/docs/frontend/javascript/shortCircuitLogic' },
           { text: '标签语句', link: '/docs/frontend/javascript/labelStatement' },
+          { text: '原型和原型链', link: '/docs/frontend/javascript/prototype' },
           {
             text: '执行上下文、调用栈与作用域',
             link: '/docs/frontend/javascript/jsExecutionFlow'

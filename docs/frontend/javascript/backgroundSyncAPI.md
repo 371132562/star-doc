@@ -14,7 +14,8 @@
 `sync.register` 方法用于注册一个后台同步任务，它接收一个 `tag` 参数作为标识符，用于在 `sync` 事件触发时区分不同的同步任务。
 
 该事件在下一步中只会被触发一次，完成后被移除，再次注册后才会被另外触发。
-```javascript
+```js
+// main.js
 navigator.serviceWorker.ready.then(registration => {
   registration.sync.register('offlineData').then(() => {
     console.log('离线同步事件注册成功');
@@ -24,6 +25,7 @@ navigator.serviceWorker.ready.then(registration => {
 
 ### 监听网络连接状态
 ```js
+// worker.js
 self.addEventListener('sync', (event) => {
   console.log('离线同步事件触发');
   if (event.tag === 'offlineData') {
@@ -32,7 +34,7 @@ self.addEventListener('sync', (event) => {
 });
 ```
 ::: info NOTE
-经过在 Edge 129 版本中的测试，表现为，如果你注册任务时，网络是连接的，那么 `sync` 事件会立即触发，如果网络是断开的，那么 `sync` 事件会在网络恢复后触发。
+经过在 Edge 129 版本中的测试，表现为，如果你注册任务时，网络连接正常，那么 `sync` 事件会立即触发，如果网络是断开的，那么 `sync` 事件会在网络恢复后触发。
 :::
 
 ## DEMO
