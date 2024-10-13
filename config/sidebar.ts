@@ -15,6 +15,7 @@ const sideBar = () => {
           },
           { text: '事件循环', link: '/docs/frontend/javascript/eventLoop' },
           { text: 'Promise的使用和执行过程', link: '/docs/frontend/javascript/promiseExecution' },
+          { text: 'async&await', link: '/docs/frontend/javascript/asyncAndAwait' },
           { text: 'rAF和rICB', link: '/docs/frontend/javascript/rAFAndrICB' },
           { text: 'Worker', link: '/docs/frontend/javascript/worker' },
           { text: 'Background Sync API', link: '/docs/frontend/javascript/backgroundSyncAPI' }

@@ -97,32 +97,6 @@ john.sayHello(); // 输出：Hello, my name is John
 console.log(john.__proto__ === personPrototype); // true
 ```
 
-### ES6 `class` 语法中的原型与继承
-在 ES6 引入了 `class` 语法后，尽管表面上是类的形式，但本质上仍然是基于原型的继承机制。
-通过 `class` 语法定义类，仍然会通过原型链实现继承。
-
-```js
-class Animal {
-  constructor(name) {
-    this.name = name;
-  }
-
-  speak() {
-    console.log(`${this.name} makes a noise.`);
-  }
-}
-
-class Dog extends Animal {
-  speak() {
-    console.log(`${this.name} barks.`);
-  }
-}
-
-const d = new Dog('Rex');
-d.speak(); // Rex barks.
-```
-尽管 `class` 语法的表现形式看起来类似其他面向对象语言的类继承，但它背后的实现依然基于 JavaScript 的原型机制。
-
 ## 原型链
 了解了以上概念之后，我们知道可以通过 `[[Prototype]]` 来访问对象的原型。
 
@@ -158,6 +132,58 @@ console.log(child.__proto__ === parent);        // true
 console.log(parent.__proto__ === grandparent);  // true
 console.log(grandparent.__proto__ === Object.prototype); // true
 console.log(Object.prototype.__proto__ === null); // true
+```
+
+## ES6 `class` 语法中的原型与继承
+在 ES6 引入了 `class` 语法后，尽管表面上是类的形式，但本质上仍然是基于原型的继承机制。
+通过 `class` 语法定义类，仍然会通过原型链实现继承。
+
+```js
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+
+  speak() {
+    console.log(`${this.name} makes a noise.`);
+  }
+}
+
+class Dog extends Animal {
+  speak() {
+    console.log(`${this.name} barks.`);
+  }
+}
+
+const d = new Dog('Rex');
+d.speak(); // Rex barks.
+```
+尽管 `class` 语法的表现形式看起来类似其他面向对象语言的类继承，但它背后的实现依然基于 JavaScript 的原型机制。
+
+## `instanceof` 运算符
+`instanceof` 是通过 **原型链** 来检查，判断某个实例对象的原型链上是否 **存在指定构造函数的 `prototype`**。
+
+通过实例对象的原型链，沿着 `[[Prototype]]` 属性逐级向上查找，直到找到与构造函数的 `prototype` 属性相同的原型为止。
+如果找到，则返回 `true`；如果找到 `null`，则返回 `false`。
+```js
+let fn = function() {}
+let arr = []
+
+fn instanceof Function // true
+arr instanceof Array // true
+fn instanceof Object // true
+arr instanceof Object // true
+
+
+function Car(make, model, year) {
+  this.make = make;
+  this.model = model;
+  this.year = year;
+}
+const auto = new Car('Honda', 'Accord', 1998);
+
+auto instanceof Car; // true
+auto instanceof Object// true
 ```
 
 ## `Object.getPrototypeOf` 和 `Object.setPrototypeOf`
