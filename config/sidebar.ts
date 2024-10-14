@@ -13,6 +13,7 @@ const sideBar = () => {
             text: '执行上下文、调用栈与作用域',
             link: '/docs/frontend/javascript/jsExecutionFlow'
           },
+          { text: '闭包', link: '/docs/frontend/javascript/closure' },
           { text: '事件循环', link: '/docs/frontend/javascript/eventLoop' },
           { text: 'Promise的使用和执行过程', link: '/docs/frontend/javascript/promiseExecution' },
           { text: 'async&await', link: '/docs/frontend/javascript/asyncAndAwait' },
