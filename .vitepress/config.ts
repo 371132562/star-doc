@@ -22,7 +22,8 @@ export default defineConfig({
     lineNumbers: true, // 代码块显示行号
     image: {
       lazyLoading: true // 图片懒加载
-    }
+    },
+    math: true
   },
   themeConfig: {
     logo: '/images/logo.png',

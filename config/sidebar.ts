@@ -57,8 +57,12 @@ const sideBar = () => {
     ],
     '/docs/dataStructures/': [
       {
-        text: '数据结构',
-        items: [{ text: '数组和链表', link: '/docs/dataStructures/arrayAndLinkedList' }]
+        text: '基本数据结构',
+        items: [{ text: '数组和链表', link: '/docs/dataStructures/basic/arrayAndLinkedList' }]
+      },
+      {
+        text: '其他',
+        items: [{ text: '字符编码', link: '/docs/dataStructures/others/characterEncoding' }]
       }
     ],
     '/docs/network/': [
