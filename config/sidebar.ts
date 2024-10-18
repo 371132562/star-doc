@@ -48,10 +48,10 @@ const sideBar = () => {
     ],
     '/docs/computerScience/': [
       {
-        text: '计算机组成原理',
+        text: '基本',
         items: [
-          { text: '高速缓存Cache', link: '/docs/computerScience/cache' },
-          { text: '补码', link: '/docs/computerScience/twosComplement' }
+          { text: '高速缓存Cache', link: '/docs/computerScience/basic/cache' },
+          { text: '补码', link: '/docs/computerScience/basic/twosComplement' }
         ]
       }
     ],
