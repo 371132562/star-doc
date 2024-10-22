@@ -19,7 +19,11 @@ const sideBar = () => {
           { text: 'async&await', link: '/docs/frontend/javascript/asyncAndAwait' },
           { text: 'rAF和rICB', link: '/docs/frontend/javascript/rAFAndrICB' },
           { text: 'Worker', link: '/docs/frontend/javascript/worker' },
-          { text: 'Background Sync API', link: '/docs/frontend/javascript/backgroundSyncAPI' }
+          { text: 'Background Sync API', link: '/docs/frontend/javascript/backgroundSyncAPI' },
+          {
+            text: 'IntersectionObserver API',
+            link: '/docs/frontend/javascript/intersectionObserver'
+          }
         ],
 
         collapsed: false
@@ -43,6 +47,11 @@ const sideBar = () => {
           { text: '浏览器缓存机制', link: '/docs/frontend/browser/browserCache' },
           { text: '浏览器帧原理', link: '/docs/frontend/browser/browserFrame' }
         ],
+        collapsed: false
+      },
+      {
+        text: 'React',
+        items: [{ text: 'Fiber', link: '/docs/frontend/react/fiber' }],
         collapsed: false
       }
     ],
