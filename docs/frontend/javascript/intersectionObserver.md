@@ -3,6 +3,9 @@
 可以在元素进入或离开视口时触发回调函数。
 
 它是一种方便且简化的手段，使得开发者能够更高效地处理懒加载、无限滚动、曝光统计等场景，而不必手动监听滚动或 `resize` 事件并计算高度、宽度等信息。
+::: tip
+该 API 注册的回调函数是异步执行的，会将其加入(宏)任务队列，不会阻塞主线程。
+:::
 
 ## 语法
 ```js
@@ -25,12 +28,25 @@ const observer = new IntersectionObserver((entries, observer) => {
 // 观察目标元素
 const targetElement = document.querySelector('.target');
 observer.observe(targetElement);
+
+// 停止观察目标元素
+observer.unobserve(targetElement);
+
+// 停止观察所有目标元素
+observer.disconnect();
+
+// takeRecords 方法返回一个包含所有未处理的 IntersectionObserverEntry 对象的数组
+// 表示目标元素的当前交叉状态。通常用于在回调函数之前立即获取交叉状态，避免遗漏状态。
+const entries = observer.takeRecords();
+entries.forEach(entry => {
+  console.log(entry.isIntersecting ? '当前可见' : '当前不可见');
+});
+
 ```
 
 ### 配置项
 `threshold` 很好理解，它是一个数值或数值数组，表示交叉部分所占比例。下边我们来演示一下另外两个配置项 `root` 和 `rootMargin`。
 
-[DEMO](https://star-adventure.vercel.app/demo/frontend/javascript/intersectionObserver)
 ```vue
 <script setup>
   const toast = useToast();

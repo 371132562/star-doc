@@ -23,6 +23,10 @@ const sideBar = () => {
           {
             text: 'IntersectionObserver API',
             link: '/docs/frontend/javascript/intersectionObserver'
+          },
+          {
+            text: 'MutationObserver API',
+            link: '/docs/frontend/javascript/mutationObserver'
           }
         ],
 
