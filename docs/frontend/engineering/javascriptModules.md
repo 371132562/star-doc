@@ -321,7 +321,7 @@ import("/modules/mymodule.js").then((module) => {
 
 `CommonJS`的`require()`命令不能加载`ESM`模块，会报错，只能使用`import()`这个方法加载。
 ```js
-(async () => {
+(async () => { 
   await import('./moudule.mjs');
 })();
 ```
