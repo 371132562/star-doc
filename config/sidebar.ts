@@ -27,6 +27,10 @@ const sideBar = () => {
           {
             text: 'MutationObserver API',
             link: '/docs/frontend/javascript/mutationObserver'
+          },
+          {
+            text: 'JS二进制',
+            link: '/docs/frontend/javascript/jsBinary'
           }
         ],
 
