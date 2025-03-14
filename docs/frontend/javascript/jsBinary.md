@@ -494,3 +494,147 @@ console.log(int32View.length); // 输出 2
 :::
 
 ## `DataView`
+
+`DataView` 是一种灵活的、低级的接口，用于从 `ArrayBuffer` 中的任意位置读取和写入多种数值类型数据，而不考虑平台的字节序（大端序或小端序）。
+
+与 `TypedArray` 不同，`DataView` 允许在同一缓冲区上混合不同的数据类型，并可以精确控制字节序。这使其特别适合处理网络协议、文件格式等需要处理混合类型数据的场景。
+
+### 基本语法
+
+`DataView` 构造函数需要一个 `ArrayBuffer`，以及可选的字节偏移量和长度参数：
+
+```js
+new DataView(buffer [, byteOffset [, byteLength]])
+```
+
+**`buffer`**: 一个已存在的 `ArrayBuffer` 对象。
+
+**`byteOffset`**: 可选，视图开始的字节偏移量，默认为 0。
+
+**`byteLength`**: 可选，视图包含的字节长度，默认为从 `byteOffset` 到缓冲区末尾的长度。
+
+### 实例属性
+
+```js
+const buffer = new ArrayBuffer(16);
+const view = new DataView(buffer, 2, 8); // 从偏移量 2 开始，长度为 8
+
+console.log(view.buffer);      // 引用的 ArrayBuffer
+console.log(view.byteOffset);  // 输出 2，视图的偏移量
+console.log(view.byteLength);  // 输出 8，视图的字节长度
+```
+
+### 实例方法
+
+`DataView` 提供了一系列方法来读写不同类型的数据：
+
+#### 读取数据方法
+
+这些方法用于从指定的字节偏移量读取指定类型的数据：
+
+```js
+getInt8(byteOffset)
+getUint8(byteOffset)
+getInt16(byteOffset[, littleEndian])
+getUint16(byteOffset[, littleEndian])
+getInt32(byteOffset[, littleEndian])
+getUint32(byteOffset[, littleEndian])
+getBigInt64(byteOffset[, littleEndian])
+getBigUint64(byteOffset[, littleEndian])
+getFloat32(byteOffset[, littleEndian])
+getFloat64(byteOffset[, littleEndian])
+```
+
+其中，`byteOffset` 是开始读取的字节偏移量，`littleEndian` 是一个布尔值，指示是否按照小端字节序读取（默认为 false，即大端字节序）。
+
+#### 写入数据方法
+
+这些方法用于在指定的字节偏移量写入指定类型的数据：
+
+```js
+setInt8(byteOffset, value)
+setUint8(byteOffset, value)
+setInt16(byteOffset, value[, littleEndian])
+setUint16(byteOffset, value[, littleEndian])
+setInt32(byteOffset, value[, littleEndian])
+setUint32(byteOffset, value[, littleEndian])
+setBigInt64(byteOffset, value[, littleEndian])
+setBigUint64(byteOffset, value[, littleEndian])
+setFloat32(byteOffset, value[, littleEndian])
+setFloat64(byteOffset, value[, littleEndian])
+```
+
+其中，`byteOffset` 是开始写入的字节偏移量，`value` 是要写入的值，`littleEndian` 是一个布尔值，指示是否按照小端字节序写入。
+
+### 实际应用示例
+
+#### 处理混合数据类型
+
+`DataView` 最大的优势在于可以在同一个 `ArrayBuffer` 中处理不同类型的数据：
+
+```js
+// 创建 24 字节的 ArrayBuffer
+const buffer = new ArrayBuffer(24);
+const view = new DataView(buffer);
+
+// 写入不同类型的数据
+view.setInt32(0, 42);                     // 32位整数
+view.setFloat64(4, 3.14159);              // 64位浮点数
+view.setUint8(12, 255);                   // 8位无符号整数
+view.setBigInt64(16, BigInt("12345678901234")); // 64位BigInt
+
+// 读取数据
+console.log(view.getInt32(0));       // 输出: 42
+console.log(view.getFloat64(4));     // 输出: 3.14159
+console.log(view.getUint8(12));      // 输出: 255
+console.log(view.getBigInt64(16));   // 输出: 12345678901234n
+```
+
+#### 处理网络协议数据
+
+网络协议通常使用大端字节序，`DataView` 可以轻松处理这种情况：
+
+```js
+// 假设从网络接收的二进制数据
+const packetBuffer = new ArrayBuffer(8);
+const packetView = new DataView(packetBuffer);
+
+// 写入数据（模拟接收到的数据包）
+packetView.setUint16(0, 0x1234);  // 协议标识符
+packetView.setUint32(2, 0x12345678);  // 消息ID
+packetView.setUint16(6, 0xABCD);  // 校验和
+
+// 读取数据（默认使用大端字节序，适合网络协议）
+const protocolId = packetView.getUint16(0);
+const messageId = packetView.getUint32(2);
+const checksum = packetView.getUint16(6);
+
+console.log(`协议ID: 0x${protocolId.toString(16)}`);    // 输出: 协议ID: 0x1234
+console.log(`消息ID: 0x${messageId.toString(16)}`);     // 输出: 消息ID: 0x12345678
+console.log(`校验和: 0x${checksum.toString(16)}`);      // 输出: 校验和: 0xabcd
+```
+
+#### 处理不同字节序
+
+`DataView` 允许显式指定字节序，这在处理来自不同系统的数据时非常有用：
+
+```js
+const buffer = new ArrayBuffer(4);
+const view = new DataView(buffer);
+
+// 写入相同的值，但使用不同的字节序
+view.setUint16(0, 0x1234, false);  // 大端字节序: 0x12 0x34
+view.setUint16(2, 0x1234, true);   // 小端字节序: 0x34 0x12
+
+// 使用 Uint8Array 检查实际存储的字节
+const bytes = new Uint8Array(buffer);
+console.log(Array.from(bytes));  // 输出: [18, 52, 52, 18] (0x12, 0x34, 0x34, 0x12)
+
+// 读取时也需要指定正确的字节序
+console.log(view.getUint16(0, false));  // 输出: 4660 (0x1234，大端序读取)
+console.log(view.getUint16(0, true));   // 输出: 13330 (0x3412，小端序读取)
+console.log(view.getUint16(2, false));  // 输出: 13330 (0x3412，大端序读取)
+console.log(view.getUint16(2, true));   // 输出: 4660 (0x1234，小端序读取)
+```
+
+通过 `DataView`，JavaScript 开发人员可以精确控制二进制数据的读取和写入，不受平台字节序限制，同时可以在同一缓冲区中混合处理不同类型的数据，这使它成为处理复杂二进制数据格式的强大工具。
