@@ -1,7 +1,7 @@
 # JS二进制
 在 Javascript 中有一系列用来处理文件或者类文件对象二进制数据的 API。它们各自具有不同的用途，但可以相互配合完成各种文件和数据的读取、操作和传输。
 
-通过下图可以快速了解这些这些对象和 API 之间的关系。
+通过下图可以快速了解这些对象和 API 之间的关系。
 ![JS二进制](/images/jsBinary.png)
 
 ## `Blob`
@@ -304,28 +304,28 @@ fileInput.addEventListener("change", (event) => {
 它是处理复杂二进制数据的关键工具，通过与视图对象结合使用，它能够在前端 JavaScript 中灵活处理各种二进制数据。
 
 ### 基本语法
-`ArrayBuffer()` 构造函数包括两个参数，一个是字节长度 `length`，另一个是可选的 `options` 对象。
+`ArrayBuffer(length)` 创建固定长度的原始二进制缓冲区。
+
+带 `options` 的可调整大小缓冲区（`resizable`、`maxByteLength`、`resize()`）为较新特性，使用前应做特性检测。
 ```js
-const buffer = new ArrayBuffer(16, { resizable: true, maxByteLength: 128 });
-console.log(buffer.byteLength);    // 输出: 16
-console.log(buffer.resizable);     // 输出: true
-console.log(buffer.maxByteLength); // 输出: 128
+// 固定长度（广泛支持）
+const buffer = new ArrayBuffer(16);
+console.log(buffer.byteLength); // 16
 
-// 调整大小，不超过 maxByteLength
-buffer.resize(64);
-console.log(buffer.byteLength);    // 输出: 64
-
-// 如果调整大小超过 maxByteLength，会抛出错误
+// 可调整大小（仅在支持环境下）
+let resizableSupported = false;
 try {
-  buffer.resize(256);
-} catch (error) {
-  console.error("Error resizing:", error.message); // 输出错误信息
+  const tmp = new ArrayBuffer(8, { resizable: true, maxByteLength: 16 });
+  resizableSupported = typeof tmp.resize === 'function';
+} catch (_) {}
+
+if (resizableSupported) {
+  const rbuf = new ArrayBuffer(16, { resizable: true, maxByteLength: 128 });
+  rbuf.resize(64);
+  console.log(rbuf.byteLength); // 64
 }
 ```
-`options` 包含两个配置项
-- `resizable`: 是否可调整大小，默认为 `false`。
-- `maxByteLength`: 可调整大小的最大字节长度，仅在 `resizable` 为 `true` 时可设置该值，默认为初始 `length` 的值。
-当使用实例方法 `resize()` 调整大小时，如果超过该值会抛出错误。
+当使用实例方法 `resize()` 调整大小时，如果超过 `maxByteLength` 会抛出错误（仅在支持环境下）。
 
 ### 静态方法
 创建 `ArrayBuffer` 后，通常会使用 `TypedArray` 或 `DataView` 视图对象来操作其内容，通过静态方法 `isView()` 可以判断某个对象是否是基于 `ArrayBuffer` 的视图对象。
@@ -353,76 +353,44 @@ console.log(slicedBuffer.byteLength); // 输出: 4
 ```
 
 #### `resize()`
-若初始参数中设置了 `resizable` 为 `true`，则可以使用 `resize()` 方法调整 `ArrayBuffer` 的大小，但不能超过 `maxByteLength`。
+若初始参数中设置了 `resizable` 为 `true`，则可以使用 `resize()` 方法调整 `ArrayBuffer` 的大小，但不能超过 `maxByteLength`。该能力为较新特性，需在支持环境中使用并做好回退。
 ```js
-const buffer = new ArrayBuffer(16, { resizable: true, maxByteLength: 64 });
-console.log(buffer.byteLength); // 输出: 16
-
-buffer.resize(32);
-console.log(buffer.byteLength); // 输出: 32
-
-buffer.resize(128); 
-// 输出: ArrayBuffer.prototype.resize: Invalid length parameter
+try {
+  const buffer = new ArrayBuffer(16, { resizable: true, maxByteLength: 64 });
+  buffer.resize(32);
+  console.log(buffer.byteLength); // 32（在支持环境下）
+} catch (e) {
+  // 回退：创建新缓冲并拷贝
+  const fallback = new ArrayBuffer(32);
+  new Uint8Array(fallback).set(new Uint8Array(16));
+}
 ```
 
 #### `transfer()`
-当你需要对缓冲区进行扩展、缩小或重分配的情况下，可以使用 `transfer()` 方法将原始数据转移给新的 `ArrayBuffer` 对象。
+`transfer()` 为较新/提案阶段 API，某些环境不可用。建议在使用前做特性检测，或采用回退方案（新建缓冲并拷贝字节）。
 ```js
-// 假设需要增加容量
-let buffer = new ArrayBuffer(1024);
-buffer = buffer.transfer(2048); // 将缓冲区大小增加到 2048 字节
-
-// 假设需要减少容量
-let buffer = new ArrayBuffer(4096);
-buffer = buffer.transfer(1024); // 缩小为 1024 字节，仅保留实际需要的大小
-```
-入参为可选参数 `newByteLength`，默认值为原始 `ArrayBuffer` 的大小。
-
-新 `ArrayBuffer` 会继承原始数据的 `options` 配置，所以如果原始数据是可调整大小的，**`newByteLength` 一定不能大于其 `maxByteLength`**。
-
-另外，缩减时溢出的字节被丢弃，扩充时新增的字节被填充为 `0`。
-
-注意，调用 `transfer()` 后，原始 `ArrayBuffer` 会被分离，`detached` 属性会变为 `true`，不再可用，`byteLength` 会变为 `0`。
-```js
-// 创建一个 resizable 的 ArrayBuffer
-const buffer = new ArrayBuffer(16, { resizable: true, maxByteLength: 64 });
-console.log(buffer.byteLength);    // 输出: 16
-console.log(buffer.detached);      // 输出: false
-
-// 使用 transfer 生成一个新 ArrayBuffer
-const newBuffer = buffer.transfer(32);
-console.log(buffer.byteLength);    // 输出: 0 （原始 ArrayBuffer 已分离）
-console.log(buffer.detached);      // 输出: true （原始 ArrayBuffer 已分离）
-
-// 新的 ArrayBuffer
-console.log(newBuffer.byteLength); // 输出: 32
-console.log(newBuffer.resizable);  // 输出: true （继承 resizable 属性）
-console.log(newBuffer.maxByteLength); // 输出: 64 （继承 maxByteLength 属性）
-
-// 尝试对已分离的 ArrayBuffer 再次调用 transfer 会报错
-try {
-  buffer.transfer(16);
-} catch (error) {
-  console.error("Error:", error.message); // 输出错误信息
+if (typeof ArrayBuffer.prototype.transfer === 'function') {
+  let buffer = new ArrayBuffer(1024);
+  buffer = buffer.transfer(2048);
+} else {
+  // 回退：手动扩容并拷贝
+  function reallocateBuffer(oldBuffer, newByteLength) {
+    const newBuffer = new ArrayBuffer(newByteLength);
+    new Uint8Array(newBuffer).set(new Uint8Array(oldBuffer).subarray(0, newByteLength));
+    return newBuffer;
+  }
 }
 ```
 
 #### `transferToFixedLength()`
-该方法与 `transfer()` 的功能类似，唯一的区别在于它总是创建一个不可调整大小的 `ArrayBuffer`。
+与 `transfer()` 类似，但始终返回固定大小的 `ArrayBuffer`。同样需要特性检测。
 ```js
-const buffer = new ArrayBuffer(16, { resizable: true, maxByteLength: 64 });
-const fixedBuffer = buffer.transferToFixedLength();
-console.log(fixedBuffer.resizable); // 输出: false
-```
-入参为可选参数 `newByteLength`，默认值为原始 `ArrayBuffer` 的大小。
-
-由于新的 `ArrayBuffer` 是固定大小，**所以允许传入的 `newByteLength` 大于原始 `ArrayBuffer` 的 `maxByteLength`**。
-```js
-const buffer = new ArrayBuffer(8, { resizable: true, maxByteLength: 16 });
-
-const buffer21= buffer.transferToFixedLength(32);
-console.log(buffer1.byteLength); // 32
-console.log(buffer1.resizable); // false
+if (typeof ArrayBuffer.prototype.transferToFixedLength === 'function') {
+  const buffer = new ArrayBuffer(8, { resizable: true, maxByteLength: 16 });
+  const fixedBuffer = buffer.transferToFixedLength(32);
+  console.log(fixedBuffer.byteLength); // 32
+  console.log(fixedBuffer.resizable); // false
+}
 ```
 
 ## `TypedArray`
@@ -489,9 +457,8 @@ let int32View = new Int32Array(buffer, 4, 2);
 
 console.log(int32View.length); // 输出 2
 ```
-::: info NOTE
-当填充元素超出了对应 `TypedArray` 的数值范围时，会被截断，这个过程类似于补码中的越界后的取模操作。
-:::
+> NOTE: 当填充元素超出了对应 `TypedArray` 的数值范围时，会被截断，这个过程类似于补码中的越界后的取模操作。
+
 
 ## `DataView`
 
@@ -507,11 +474,9 @@ console.log(int32View.length); // 输出 2
 new DataView(buffer [, byteOffset [, byteLength]])
 ```
 
-**`buffer`**: 一个已存在的 `ArrayBuffer` 对象。
-
-**`byteOffset`**: 可选，视图开始的字节偏移量，默认为 0。
-
-**`byteLength`**: 可选，视图包含的字节长度，默认为从 `byteOffset` 到缓冲区末尾的长度。
+- `buffer`: 一个已存在的 `ArrayBuffer` 对象。
+- `byteOffset`: 可选，视图开始的字节偏移量，默认为 0。
+- `byteLength`: 可选，视图包含的字节长度，默认为从 `byteOffset` 到缓冲区末尾的长度。
 
 ### 实例属性
 
@@ -590,9 +555,7 @@ console.log(view.getUint8(12));      // 输出: 255
 console.log(view.getBigInt64(16));   // 输出: 12345678901234n
 ```
 
-#### 处理网络协议数据
-
-网络协议通常使用大端字节序，`DataView` 可以轻松处理这种情况：
+#### 处理网络协议数据（大端序）
 
 ```js
 // 假设从网络接收的二进制数据
@@ -600,41 +563,144 @@ const packetBuffer = new ArrayBuffer(8);
 const packetView = new DataView(packetBuffer);
 
 // 写入数据（模拟接收到的数据包）
-packetView.setUint16(0, 0x1234);  // 协议标识符
-packetView.setUint32(2, 0x12345678);  // 消息ID
-packetView.setUint16(6, 0xABCD);  // 校验和
+packetView.setUint16(0, 0x1234);        // 协议标识符（默认为大端序）
+packetView.setUint32(2, 0x12345678);
+packetView.setUint16(6, 0xABCD);
 
 // 读取数据（默认使用大端字节序，适合网络协议）
 const protocolId = packetView.getUint16(0);
 const messageId = packetView.getUint32(2);
 const checksum = packetView.getUint16(6);
-
-console.log(`协议ID: 0x${protocolId.toString(16)}`);    // 输出: 协议ID: 0x1234
-console.log(`消息ID: 0x${messageId.toString(16)}`);     // 输出: 消息ID: 0x12345678
-console.log(`校验和: 0x${checksum.toString(16)}`);      // 输出: 校验和: 0xabcd
 ```
 
-#### 处理不同字节序
-
-`DataView` 允许显式指定字节序，这在处理来自不同系统的数据时非常有用：
+#### 显式控制字节序
 
 ```js
-const buffer = new ArrayBuffer(4);
-const view = new DataView(buffer);
+const buffer2 = new ArrayBuffer(4);
+const view2 = new DataView(buffer2);
 
 // 写入相同的值，但使用不同的字节序
-view.setUint16(0, 0x1234, false);  // 大端字节序: 0x12 0x34
-view.setUint16(2, 0x1234, true);   // 小端字节序: 0x34 0x12
+view2.setUint16(0, 0x1234, false);  // 大端：0x12 0x34
+view2.setUint16(2, 0x1234, true);   // 小端：0x34 0x12
 
-// 使用 Uint8Array 检查实际存储的字节
-const bytes = new Uint8Array(buffer);
-console.log(Array.from(bytes));  // 输出: [18, 52, 52, 18] (0x12, 0x34, 0x34, 0x12)
-
-// 读取时也需要指定正确的字节序
-console.log(view.getUint16(0, false));  // 输出: 4660 (0x1234，大端序读取)
-console.log(view.getUint16(0, true));   // 输出: 13330 (0x3412，小端序读取)
-console.log(view.getUint16(2, false));  // 输出: 13330 (0x3412，大端序读取)
-console.log(view.getUint16(2, true));   // 输出: 4660 (0x1234，小端序读取)
+// 读取时也需要指定正确字节序
+console.log(view2.getUint16(0, false)); // 4660 (0x1234)
+console.log(view2.getUint16(0, true));  // 13330 (0x3412)
 ```
 
 通过 `DataView`，JavaScript 开发人员可以精确控制二进制数据的读取和写入，不受平台字节序限制，同时可以在同一缓冲区中混合处理不同类型的数据，这使它成为处理复杂二进制数据格式的强大工具。
+
+## 进阶：二进制互操作能力
+
+这些能力并非新的基础类型，而是与 `Blob`/`File`/`ArrayBuffer`/`TypedArray`/`DataView` 高度协作的配套 API，覆盖“文本⇄字节”“流式处理”“跨线程传递”“压缩存储”“图像渲染”“网络传输”等真实工程场景。下列小节按照常见任务拆分，实际使用时常常需要组合这些能力。
+
+### 文本与二进制转换：`TextEncoder` / `TextDecoder`
+
+`TextEncoder` 将字符串按 UTF-8 编码为 `Uint8Array`；`TextDecoder` 将 `ArrayBuffer`/`TypedArray` 解码为字符串。
+```js
+const encoder = new TextEncoder();
+const bytes = encoder.encode('你好, world');
+const decoder = new TextDecoder('utf-8');
+console.log(decoder.decode(bytes)); // 你好, world
+```
+
+### Base64 编解码
+
+- `btoa`/`atob` 仅适用于 Latin-1；处理 Unicode 时应配合 `TextEncoder`/`TextDecoder`。
+- Data URL 通常比原始二进制增大约 33%，不适合大文件持久化。
+```js
+function uint8ToBase64(uint8){
+  let s = '';
+  for (let i = 0; i < uint8.length; i++) s += String.fromCharCode(uint8[i]);
+  return btoa(s);
+}
+function base64ToUint8(b64){
+  const s = atob(b64);
+  const out = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+  return out;
+}
+```
+
+### Streams：流式处理二进制
+
+- `Blob.stream()` 获取 `ReadableStream`，适合大文件分块处理以降低内存峰值。
+- `fetch` 支持流式响应与上传（视运行环境特性）。
+```js
+const res = await fetch('/large.bin');
+const reader = res.body.getReader();
+let received = 0;
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  received += value.byteLength;
+}
+```
+
+### 可转移对象与结构化克隆（Transferables）
+
+- 通过 `postMessage` 在 `Worker`/`window`/`MessageChannel` 之间转移 `ArrayBuffer`/`ImageBitmap` 等可转移对象，避免拷贝。
+- 被转移的 `ArrayBuffer` 会在发送方变为 detached。
+```js
+const worker = new Worker('worker.js');
+const buffer = new ArrayBuffer(1024);
+worker.postMessage({ buffer }, [buffer]);
+```
+
+### `SharedArrayBuffer` 与 `Atomics`
+
+- `SharedArrayBuffer` 允许多线程共享内存；生产环境需配置 COOP/COEP。
+- `Atomics` 提供原子读写与等待/唤醒原语。
+```js
+const sab = new SharedArrayBuffer(4);
+const view = new Int32Array(sab);
+Atomics.store(view, 0, 1);
+const prev = Atomics.exchange(view, 0, 2);
+```
+
+### 压缩与解压：`CompressionStream` / `DecompressionStream`
+
+```js
+async function gzipBlob(inputBlob){
+  const cs = new CompressionStream('gzip');
+  const out = inputBlob.stream().pipeThrough(cs);
+  return new Response(out).blob();
+}
+async function gunzipBlob(gzipBlob){
+  const ds = new DecompressionStream('gzip');
+  const out = gzipBlob.stream().pipeThrough(ds);
+  return new Response(out).blob();
+}
+```
+
+### Canvas / 图片互操作
+
+- `createImageBitmap(Blob|ImageData)`：高效解码/创建位图。
+- `canvas.toBlob()`：导出画布为图片 `Blob`。
+```js
+const bitmap = await createImageBitmap(fileBlob);
+const canvas = document.createElement('canvas');
+canvas.width = bitmap.width; canvas.height = bitmap.height;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(bitmap, 0, 0);
+canvas.toBlob((blob)=>{ /* 上传或保存 */ }, 'image/png', 0.92);
+```
+
+### 与 Fetch/Response/FormData 的互操作
+
+- `fetch` 请求体可为 `Blob`、`ArrayBuffer`、`TypedArray`、`ReadableStream`。
+- `Response`/`Request` 支持转换为 `Blob`/`ArrayBuffer`/`FormData`。
+```js
+await fetch('/upload', { method: 'POST', body: someBlob });
+const fd = new FormData();
+fd.append('file', someBlob, 'example.bin');
+await fetch('/upload', { method: 'POST', body: fd });
+```
+
+### 最佳实践与常见陷阱
+
+- 大文件优先流式处理，避免一次性 `arrayBuffer()` 造成内存峰值。
+- 及时 `URL.revokeObjectURL` 释放对象 URL，避免内存泄漏。
+- 传输大数据优先使用 Transferables，避免拷贝。
+- 文本/二进制互转使用 `TextEncoder`/`TextDecoder`，避免 `btoa`/`atob` 的 Unicode 问题。
+- 使用新特性（可调整大小 `ArrayBuffer`、`transfer*` 等）务必做特性检测并提供回退。
